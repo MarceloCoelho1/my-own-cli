@@ -1,1 +1,1 @@
-## my own cli write in c++
+## my own cli written in c++
