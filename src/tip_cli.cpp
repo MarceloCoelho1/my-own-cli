@@ -60,39 +60,6 @@ int ts_backend_boilerplate() {
     }
   }
 
-  // create important files
-  vector<string> filenames = {"docker-compose.yml", ".gitignore"};
-  vector<string> contents = {
-      R"(version: '3.9'
-
-services:
-  db:
-    container_name: db
-    image: bitnami/postgresql:latest
-    hostname: localhost
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWD}
-      POSTGRES_DB: ${POSTGRES_DB}
-    ports:
-      - '5432:5432'
-)",
-      R"(node_modules/
-.env
-)",
-  };
-
-  for (size_t i = 0; i < filenames.size(); ++i) {
-    ofstream file(filenames[i]);
-    if (file.is_open()) {
-      cout << "File created: " << filenames[i] << endl;
-      file << contents[i] << endl;
-      file.close();
-    } else {
-      cerr << "Error creating file: " << filenames[i] << endl;
-    }
-  }
-
   // run commands
 
   vector<CommandDefinition> commands = {
@@ -124,6 +91,40 @@ services:
       break;
     }
   }
+
+  // create important files
+  vector<string> filenames = {"docker-compose.yml", ".gitignore"};
+  vector<string> contents = {
+      R"(version: '3.9'
+
+services:
+  db:
+    container_name: db
+    image: bitnami/postgresql:latest
+    hostname: localhost
+    environment:
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+      POSTGRES_DB: postgres_db
+    ports:
+      - '5432:5432'
+)",
+      R"(node_modules/
+.env
+)",
+  };
+
+  for (size_t i = 0; i < filenames.size(); ++i) {
+    ofstream file(filenames[i]);
+    if (file.is_open()) {
+      cout << "File created: " << filenames[i] << endl;
+      file << contents[i] << endl;
+      file.close();
+    } else {
+      cerr << "Error creating file: " << filenames[i] << endl;
+    }
+  }
+
 
   return 0;
 }
