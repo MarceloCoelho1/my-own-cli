@@ -3,8 +3,16 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#include <iomanip>
 
 using namespace std;
+
+// ANSI escape codes for color
+const string RESET = "\033[0m";
+const string BOLD = "\033[1m";
+const string GREEN = "\033[32m";
+const string CYAN = "\033[36m";
+const string YELLOW = "\033[33m";
 
 struct CommandDefinition {
   string description;
@@ -13,12 +21,16 @@ struct CommandDefinition {
 };
 
 int help() {
-  cout << "How to use tip cli: " << endl;
-  cout << "$ tip help                   #Show How to use" << endl;
-  cout << "$ tip init-backend                   #init a backend with ts, prisma, postgres, docker and fastify" << endl;
+    cout << BOLD << "Usage: tip [COMMAND]" << RESET << endl;
+    cout << endl;
+    cout << BOLD << "Commands:" << RESET << endl;
+    cout << setw(25) << left << GREEN + "  help" + RESET << YELLOW + "  # Show how to use" + RESET << endl;
+    cout << setw(25) << left << GREEN + "  init-backend" + RESET << YELLOW + "  # Init a backend with TS, Prisma, PostgreSQL, Docker, and Fastify" + RESET << endl;
+    cout << endl;
+    cout << BOLD << "Options:" << RESET << endl;
+    cout << setw(25) << left << CYAN + "  -h, --help" + RESET << YELLOW + "  # Show this help message" + RESET << endl;
 
-
-  return 0;
+    return 0;
 }
 
 int ts_backend_boilerplate() {
@@ -154,7 +166,7 @@ int main(int argc, char *argv[]) {
   if (argc > 1)
     arg = argv[1];
 
-  if (argc == 1 || arg == "--help") {
+  if (argc == 1 || arg == "--help" || arg == "-h") {
     help();
   } else {
 
