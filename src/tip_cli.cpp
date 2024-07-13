@@ -12,6 +12,12 @@ int help() {
               "Fastify" +
               RESET
        << endl;
+  cout << setw(25) << left << GREEN + "  init-frontend" + RESET
+       << YELLOW +
+              "  # Init a frontend with react, vite"
+              "and ts" +
+              RESET
+       << endl;
   cout << endl;
   cout << BOLD << "Options:" << RESET << endl;
   cout << setw(25) << left << CYAN + "  -h, --help" + RESET
@@ -26,39 +32,52 @@ int ts_backend_boilerplate() {
   // create dirs
 
   string root_dir = "src";
-  vector<string> inner_src = {"core",
-                              "core/entities",
-                              "core/errors",
-                              "core/repositories",
-                              "core/services",
-                              "core/types",
-                              "core/usecases",
+  vector<Directory> inner_src = {
+      {"core", {}},
+      {"core/entities", {"user.ts"}},
+      {"core/errors", {}},
+      {"core/repositories", {"IUserRepository.ts"}},
+      {"core/services", {}},
+      {"core/types", {}},
+      {"core/usecases", {"userUsecases.ts"}},
 
-                              "data",
-                              "data/datasources",
-                              "data/repositories",
+      {"data", {}},
+      {"data/datasources", {"prismaClient.ts"}},
+      {"data/repositories", {"prismaUserRepository.ts"}},
 
-                              "env",
+      {"env", {"index.ts"}},
 
-                              "http",
-                              "http/controller",
-                              "http/dtos",
-                              "http/routes",
-                              "http/schemasValidation",
+      {"http", {}},
+      {"http/controller", {"userControler.ts"}},
+      {"http/dtos", {}},
+      {"http/routes", {"userRoutes.ts"}},
+      {"http/schemas", {}},
 
-                              "infra"};
+      {"infra/services", {"jwtService.ts", "BcryptService.ts"}}};
 
   filesystem::create_directory(root_dir);
 
   for (const auto &dir : inner_src) {
-    string full_path = root_dir + "/" + dir;
+    string full_path = root_dir + "/" + dir.directory;
     if (!filesystem::exists(full_path)) {
-      filesystem::create_directory(full_path);
+      filesystem::create_directories(full_path);
       cout << "Directory created: " << full_path << endl;
     } else {
       cout << "Directory already exists: " << full_path << endl;
     }
+
+    for (const auto &fileToCreate : dir.files) {
+      string file_path = full_path + "/" + fileToCreate ;
+      ofstream file(file_path);
+      if (file.is_open()) {
+        cout << "File created: " << file_path << endl;
+        file.close();
+      } else {
+        cerr << "Failed to create file: " << file_path << endl;
+      }
+    } 
   }
+
 
   // run commands
 
@@ -92,7 +111,7 @@ int ts_backend_boilerplate() {
     }
   }
 
-  // create important files
+  // create files
   vector<string> filenames = {"docker-compose.yml", ".gitignore"};
   vector<string> contents = {
       R"(version: '3.9'
@@ -160,9 +179,8 @@ int ts_react_frontend_boilerplate() {
   // create dirs
 
   string root_dir = "src";
-  vector<string> inner_src = {
-      "api", "components", "hooks", "types", "utils", "tests", "views     "
-  };
+  vector<string> inner_src = {"api",   "components", "hooks", "types",
+                              "utils", "tests",      "views"};
 
   filesystem::create_directory(root_dir);
 

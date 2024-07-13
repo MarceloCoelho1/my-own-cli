@@ -22,6 +22,12 @@ struct CommandDefinition {
     vector<string> args;
 };
 
+struct Directory {
+    string directory;
+    vector<string> files;
+};
+
+
 int help();
 int ts_backend_boilerplate();
 int ts_react_frontend_boilerplate();
