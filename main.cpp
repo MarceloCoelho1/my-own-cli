@@ -11,8 +11,8 @@ int main(int argc, char *argv[]) {
     } else {
         if (arg == "init-backend") {
             ts_backend_boilerplate();
-        } else if (arg == "ls") {
-            // Future functionality
+        } else if (arg == "init-frontend") {
+            ts_react_frontend_boilerplate();
         }
     }
 

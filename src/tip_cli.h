@@ -24,5 +24,5 @@ struct CommandDefinition {
 
 int help();
 int ts_backend_boilerplate();
-
+int ts_react_frontend_boilerplate();
 #endif // TIP_CLI_H
