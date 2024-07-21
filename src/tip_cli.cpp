@@ -7,17 +7,11 @@ int help() {
   cout << setw(25) << left << GREEN + "  help" + RESET
        << YELLOW + "  # Show how to use" + RESET << endl;
   cout << setw(25) << left << GREEN + "  init-backend" + RESET
-       << YELLOW +
-              "  # Init a backend with TS, Prisma, PostgreSQL, Docker, and "
-              "Fastify" +
-              RESET
-       << endl;
+       << YELLOW + "  # Init a backend with TS, Prisma, PostgreSQL, Docker, and Fastify" + RESET << endl;
   cout << setw(25) << left << GREEN + "  init-frontend" + RESET
-       << YELLOW +
-              "  # Init a frontend with react, vite"
-              "and ts" +
-              RESET
-       << endl;
+       << YELLOW + "  # Init a frontend with react, vite and ts" + RESET << endl;
+  cout << setw(25) << left << GREEN + "  osfetch" + RESET
+       << YELLOW + "  # Show system information" + RESET << endl;
   cout << endl;
   cout << BOLD << "Options:" << RESET << endl;
   cout << setw(25) << left << CYAN + "  -h, --help" + RESET
@@ -67,7 +61,7 @@ int ts_backend_boilerplate() {
     }
 
     for (const auto &fileToCreate : dir.files) {
-      string file_path = full_path + "/" + fileToCreate ;
+      string file_path = full_path + "/" + fileToCreate;
       ofstream file(file_path);
       if (file.is_open()) {
         cout << "File created: " << file_path << endl;
@@ -75,9 +69,8 @@ int ts_backend_boilerplate() {
       } else {
         cerr << "Failed to create file: " << file_path << endl;
       }
-    } 
+    }
   }
-
 
   // run commands
 
@@ -143,6 +136,84 @@ services:
       cerr << "Error creating file: " << filenames[i] << endl;
     }
   }
+
+  return 0;
+}
+
+std::string trim(const std::string &str) {
+  size_t first = str.find_first_not_of(" \t\n");
+  if (first == std::string::npos)
+    return "";
+  size_t last = str.find_last_not_of(" \t\n");
+  return str.substr(first, last - first + 1);
+}
+
+void print_info(const std::string &label, const std::string &value) {
+  std::cout << label << ": " << value << std::endl;
+}
+
+string exec(const char *cmd) {
+  char buffer[128];
+  std::string result = "";
+  FILE *pipe = popen(cmd, "r");
+  if (!pipe)
+    throw std::runtime_error("popen() failed!");
+  try {
+    while (fgets(buffer, sizeof buffer, pipe) != NULL) {
+      result += buffer;
+    }
+  } catch (...) {
+    pclose(pipe);
+    throw;
+  }
+  pclose(pipe);
+  return result;
+}
+
+int osfetch() {
+
+  std::string os = trim(exec("uname -o"));
+  std::string kernel = trim(exec("uname -r"));
+  std::string uptime = trim(exec("uptime -p"));
+  std::string shell = trim(exec("echo $SHELL"));
+  std::string cpu =
+      trim(exec("lscpu | grep 'Model name' | sed 's/Model name: //g'"));
+  std::string gpu = trim(exec("lspci | grep 'VGA' | sed 's/.*: //g'"));
+  std::string memory =
+      trim(exec("free -h | grep Mem | awk '{print $3 \"/\" $2}'"));
+  std::string distro =
+      trim(exec("lsb_release -d | sed 's/Description:\\s*//g'"));
+  std::string model =
+      trim(exec("cat /sys/devices/virtual/dmi/id/product_name"));
+  std::string resolution =
+      trim(exec("xdpyinfo | grep dimensions | awk '{print $2}'"));
+  std::string de = trim(exec("echo $XDG_CURRENT_DESKTOP"));
+  std::string wm_theme =
+      "N/A"; // Obtaining the WM theme might require specific commands per WM
+  std::string theme = trim(exec(
+      "gsettings get org.gnome.desktop.interface gtk-theme | sed \"s/'//g\""));
+  std::string icons = trim(exec(
+      "gsettings get org.gnome.desktop.interface icon-theme | sed \"s/'//g\""));
+  std::string term = trim(exec("echo $TERM"));
+  std::string term_font =
+      "N/A"; // This might require specific commands per terminal
+
+  
+  print_info("OS", os);
+  print_info("Host", model);
+  print_info("Kernel", kernel);
+  print_info("Uptime", uptime);
+  print_info("Shell", shell);
+  print_info("Resolution", resolution);
+  print_info("DE", de);
+  print_info("WM Theme", wm_theme);
+  print_info("Theme", theme);
+  print_info("Icons", icons);
+  print_info("Terminal", term);
+  print_info("Terminal Font", term_font);
+  print_info("CPU", cpu);
+  print_info("GPU", gpu);
+  print_info("Memory", memory);
 
   return 0;
 }

@@ -31,4 +31,5 @@ struct Directory {
 int help();
 int ts_backend_boilerplate();
 int ts_react_frontend_boilerplate();
+int osfetch(); 
 #endif // TIP_CLI_H
