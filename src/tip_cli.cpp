@@ -140,24 +140,24 @@ services:
   return 0;
 }
 
-std::string trim(const std::string &str) {
+string trim(const string &str) {
   size_t first = str.find_first_not_of(" \t\n");
-  if (first == std::string::npos)
+  if (first == string::npos)
     return "";
   size_t last = str.find_last_not_of(" \t\n");
   return str.substr(first, last - first + 1);
 }
 
-void print_info(const std::string &label, const std::string &value) {
-  std::cout << label << ": " << value << std::endl;
+void print_info(const string &label, const string &value) {
+  cout << label << ": " << value << endl;
 }
 
 string exec(const char *cmd) {
   char buffer[128];
-  std::string result = "";
+  string result = "";
   FILE *pipe = popen(cmd, "r");
   if (!pipe)
-    throw std::runtime_error("popen() failed!");
+    throw runtime_error("popen() failed!");
   try {
     while (fgets(buffer, sizeof buffer, pipe) != NULL) {
       result += buffer;
@@ -172,33 +172,35 @@ string exec(const char *cmd) {
 
 int osfetch() {
 
-  std::string os = trim(exec("uname -o"));
-  std::string kernel = trim(exec("uname -r"));
-  std::string uptime = trim(exec("uptime -p"));
-  std::string shell = trim(exec("echo $SHELL"));
-  std::string cpu =
+  string user = trim(exec("whoami"));
+  string os = trim(exec("echo $(uname -n) $(uname -s)"));
+  string kernel = trim(exec("uname -r"));
+  string uptime = trim(exec("uptime -p"));
+  string shell = trim(exec("basename $SHELL"));
+  string cpu =
       trim(exec("lscpu | grep 'Model name' | sed 's/Model name: //g'"));
-  std::string gpu = trim(exec("lspci | grep 'VGA' | sed 's/.*: //g'"));
-  std::string memory =
+  string gpu = trim(exec("lspci | grep 'VGA' | sed 's/.*: //g'"));
+  string memory =
       trim(exec("free -h | grep Mem | awk '{print $3 \"/\" $2}'"));
-  std::string distro =
+  string distro =
       trim(exec("lsb_release -d | sed 's/Description:\\s*//g'"));
-  std::string model =
+  string model =
       trim(exec("cat /sys/devices/virtual/dmi/id/product_name"));
-  std::string resolution =
+  string resolution =
       trim(exec("xdpyinfo | grep dimensions | awk '{print $2}'"));
-  std::string de = trim(exec("echo $XDG_CURRENT_DESKTOP"));
-  std::string wm_theme =
+  string de = trim(exec("echo $XDG_CURRENT_DESKTOP"));
+  string wm_theme =
       "N/A"; // Obtaining the WM theme might require specific commands per WM
-  std::string theme = trim(exec(
+  string theme = trim(exec(
       "gsettings get org.gnome.desktop.interface gtk-theme | sed \"s/'//g\""));
-  std::string icons = trim(exec(
+  string icons = trim(exec(
       "gsettings get org.gnome.desktop.interface icon-theme | sed \"s/'//g\""));
-  std::string term = trim(exec("echo $TERM"));
-  std::string term_font =
+  string term = trim(exec("echo $TERM"));
+  string term_font =
       "N/A"; // This might require specific commands per terminal
 
   
+  print_info("user", user);
   print_info("OS", os);
   print_info("Host", model);
   print_info("Kernel", kernel);
