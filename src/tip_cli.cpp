@@ -153,8 +153,10 @@ string trim(const string &str) {
   return str.substr(first, last - first + 1);
 }
 
-void print_info(const string &label, const string &value) {
-  cout << label << ": " << value << endl;
+void print_info(const string &label, const string &value, size_t label_width,
+                const string &color) {
+  cout << BOLD << color << setw(label_width) << left << label << RESET << " | "
+       << value << endl;
 }
 
 string exec(const char *cmd) {
@@ -194,17 +196,20 @@ int osfetch() {
       "gsettings get org.gnome.desktop.interface gtk-theme | sed \"s/'//g\""));
   string term = trim(exec("echo $TERM"));
 
-  print_info("user", user);
-  print_info("OS", os);
-  print_info("Kernel", kernel);
-  print_info("Uptime", uptime);
-  print_info("Shell", shell);
-  print_info("Resolution", resolution);
-  print_info("DE", de);
-  print_info("Theme", theme);
-  print_info("Terminal", term);
-  print_info("CPU", cpu);
-  print_info("Memory", memory);
+  size_t label_width = 15;
+
+  // Print the information with aligned columns
+  print_info("user", user, label_width, PURPLE);
+  print_info("os", os, label_width, CYAN);
+  print_info("kernel", kernel, label_width, LIGHT_YELLOW);
+  print_info("uptime", uptime, label_width, RED);
+  print_info("shell", shell, label_width, PURPLE);
+  print_info("resolution", resolution, label_width, CYAN);
+  print_info("de", de, label_width, LIGHT_YELLOW);
+  print_info("theme", theme, label_width, RED);
+  print_info("terminal", term, label_width, PURPLE);
+  print_info("cpu", cpu, label_width, CYAN);
+  print_info("memory", memory, label_width, LIGHT_YELLOW);
 
   return 0;
 }
